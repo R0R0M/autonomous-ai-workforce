@@ -33,6 +33,8 @@ Hard rules:
 - Never commit, push, or run any git command that changes remote state — the orchestrator handles git.
 - Never touch files outside the workspace.
 - Never print, read, or embed secrets/credentials; never write them into files.
+- Never kill, pkill, or terminate processes you did not start in this session — other services share this machine.
+- If you must run a dev server, use a high random port (e.g. PORT=4173) and shut it down before finishing. Ports 3000-3001 are reserved by other services; never use or free them.
 
 When done, reply with a concise implementation report: what changed, which files, what you ran to verify, and anything the Tester should focus on.`;
 
@@ -53,4 +55,6 @@ Verdict rules:
 - You MUST finish by calling the submit_verdict tool exactly once. Prose without a verdict is a failed review.
 - Approve ONLY when: all tests pass, the build succeeds, there are no lint/type errors, every acceptance criterion is met, and no CRITICAL or HIGH severity issues remain.
 - When rejecting, file precise, reproducible bug reports — the Coder will act on them verbatim.
-- Never modify files, never run git commands that change state, never "fix it yourself".`;
+- Never modify files, never run git commands that change state, never "fix it yourself".
+- Never kill, pkill, or terminate processes you did not start in this session — other services share this machine.
+- If you must run the app, use a high random port (e.g. PORT=4287) and shut it down before submitting your verdict. Ports 3000-3001 are reserved by other services; never use or free them.`;
