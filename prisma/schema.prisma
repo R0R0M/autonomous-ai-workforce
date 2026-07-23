@@ -1,0 +1,295 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Auth.js ----------
+
+model User {
+  id            String       @id @default(cuid())
+  name          String?
+  email         String?      @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  repositories  Repository[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ---------- Platform ----------
+
+enum RepoStatus {
+  IDLE
+  RUNNING
+  PAUSED
+  ERROR
+}
+
+enum ScheduleMode {
+  CONTINUOUS
+  NIGHTLY
+  MANUAL
+}
+
+enum MergeMode {
+  PULL_REQUEST
+  DIRECT_MERGE
+}
+
+enum IdeaStatus {
+  BACKLOG
+  ACTIVE
+  DONE
+  FAILED
+  REJECTED
+}
+
+enum RunPhase {
+  IDEATING
+  CODING
+  TESTING
+  FIXING
+  SAFETY_CHECK
+  PUSHING
+  AWAITING_APPROVAL
+  MERGING
+  DEPLOYING
+  VERIFYING
+  COMPLETED
+  FAILED
+  ROLLED_BACK
+}
+
+enum AgentName {
+  IDEATOR
+  CODER
+  TESTER
+  SYSTEM
+}
+
+enum BugSeverity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum BugStatus {
+  OPEN
+  FIXED
+  WONT_FIX
+}
+
+enum DeployStatus {
+  TRIGGERED
+  VERIFYING
+  SUCCEEDED
+  FAILED
+  ROLLED_BACK
+}
+
+model Repository {
+  id                   String       @id @default(cuid())
+  userId               String
+  user                 User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  owner                String
+  name                 String
+  defaultBranch        String       @default("main")
+  githubTokenEnc       String
+  schedule             ScheduleMode @default(CONTINUOUS)
+  mergeMode            MergeMode    @default(PULL_REQUEST)
+  autoMergePr          Boolean      @default(true)
+  requireHumanApproval Boolean      @default(false)
+  deployHookUrl        String?
+  healthCheckUrl       String?
+  status               RepoStatus   @default(IDLE)
+  lastCycleAt          DateTime?
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+
+  ideas       Idea[]
+  runs        CycleRun[]
+  memories    MemoryEntry[]
+  logs        ActivityLog[]
+  deployments Deployment[]
+  messages    AgentMessage[]
+  toolEvents  ToolEvent[]
+
+  @@unique([userId, owner, name])
+}
+
+model Idea {
+  id                  String     @id @default(cuid())
+  repositoryId        String
+  repository          Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  title               String
+  description         String
+  reasoning           String
+  expectedOutcome     String
+  acceptanceCriteria  Json // string[]
+  filesLikelyAffected Json // string[]
+  dependencies        Json // string[]
+  risks               Json // string[]
+  successMetrics      Json // string[]
+  scores              Json // Record<dimension, 1-100>
+  priority            Int
+  status              IdeaStatus @default(BACKLOG)
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  runs CycleRun[]
+
+  @@index([repositoryId, status, priority])
+}
+
+model CycleRun {
+  id             String     @id @default(cuid())
+  repositoryId   String
+  repository     Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  ideaId         String?
+  idea           Idea?      @relation(fields: [ideaId], references: [id], onDelete: SetNull)
+  phase          RunPhase   @default(IDEATING)
+  branchName     String?
+  prNumber       Int?
+  mergeCommitSha String?
+  fixIteration   Int        @default(0)
+  inputTokens    Int        @default(0)
+  outputTokens   Int        @default(0)
+  error          String?
+  startedAt      DateTime   @default(now())
+  finishedAt     DateTime?
+
+  messages    AgentMessage[]
+  bugs        BugReport[]
+  deployments Deployment[]
+  toolEvents  ToolEvent[]
+
+  @@index([repositoryId, phase])
+}
+
+model AgentMessage {
+  id           String     @id @default(cuid())
+  runId        String
+  run          CycleRun   @relation(fields: [runId], references: [id], onDelete: Cascade)
+  repositoryId String
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  fromAgent    AgentName
+  toAgent      AgentName
+  type         String // TASK_BRIEF | IMPLEMENTATION_REPORT | BUG_REPORT | VERDICT | ANALYSIS | STATUS
+  content      Json
+  createdAt    DateTime   @default(now())
+
+  @@index([repositoryId, createdAt])
+}
+
+model BugReport {
+  id               String      @id @default(cuid())
+  runId            String
+  run              CycleRun    @relation(fields: [runId], references: [id], onDelete: Cascade)
+  severity         BugSeverity
+  title            String
+  description      String
+  stepsToReproduce String
+  expectedBehavior String
+  actualBehavior   String
+  logs             String?
+  likelyFiles      Json // string[]
+  suggestedFixes   String
+  status           BugStatus   @default(OPEN)
+  createdAt        DateTime    @default(now())
+}
+
+model Deployment {
+  id           String       @id @default(cuid())
+  runId        String
+  run          CycleRun     @relation(fields: [runId], references: [id], onDelete: Cascade)
+  repositoryId String
+  repository   Repository   @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  status       DeployStatus
+  commitSha    String?
+  error        String?
+  createdAt    DateTime     @default(now())
+  finishedAt   DateTime?
+
+  @@index([repositoryId, createdAt])
+}
+
+model MemoryEntry {
+  id           String     @id @default(cuid())
+  repositoryId String
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  agent        AgentName
+  kind         String // BUG | FAILED_IDEA | SUCCESS | ARCHITECTURE | STANDARD | DEPLOYMENT
+  content      String
+  createdAt    DateTime   @default(now())
+
+  @@index([repositoryId, agent, createdAt])
+}
+
+/// One row per tool action an agent takes — powers the live activity feed.
+model ToolEvent {
+  id           String     @id @default(cuid())
+  runId        String
+  run          CycleRun   @relation(fields: [runId], references: [id], onDelete: Cascade)
+  repositoryId String
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  agent        AgentName
+  tool         String // bash | read_file | write_file | list_files
+  summary      String // e.g. "wrote src/app.ts (+12/-3)" or the command line
+  detail       String? // diff or command output, capped
+  createdAt    DateTime   @default(now())
+
+  @@index([repositoryId, createdAt])
+  @@index([runId, createdAt])
+}
+
+model ActivityLog {
+  id           String     @id @default(cuid())
+  repositoryId String
+  repository   Repository @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  runId        String?
+  level        String // info | warn | error
+  message      String
+  meta         Json?
+  createdAt    DateTime   @default(now())
+
+  @@index([repositoryId, createdAt])
+}
