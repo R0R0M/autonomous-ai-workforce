@@ -6,9 +6,9 @@ const config: Config = {
     extend: {
       colors: {
         surface: {
-          DEFAULT: "#0b0f17",
-          raised: "#111827",
-          border: "#1f2937",
+          DEFAULT: "rgb(var(--surface) / <alpha-value>)",
+          raised: "rgb(var(--surface-raised) / <alpha-value>)",
+          border: "rgb(var(--surface-border) / <alpha-value>)",
         },
       },
     },

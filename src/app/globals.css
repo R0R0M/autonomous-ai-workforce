@@ -2,9 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Theme surfaces — dark is the default; .light on <html> flips them. */
+:root {
+  --surface: 11 15 23;
+  --surface-raised: 17 24 39;
+  --surface-border: 31 41 55;
+}
+
+:root.light {
+  --surface: 245 247 250;
+  --surface-raised: 255 255 255;
+  --surface-border: 224 230 240;
+}
+
 body {
   @apply bg-surface text-gray-200 antialiased;
 }
+
+/* ---------------------------------------------------------------------------
+ * Light-mode remaps. The app is authored dark-first with Tailwind utilities;
+ * these attribute-based overrides re-map the palette when .light is active.
+ * ------------------------------------------------------------------------- */
+.light body { color: #1e293b; }
+
+.light .text-white,
+.light [class*="text-white"] { color: #0f172a; }
+.light [class*="text-gray-200"] { color: #1e293b; }
+.light [class*="text-gray-300"] { color: #475569; }
+.light [class*="text-gray-400"] { color: #64748b; }
+.light [class*="text-gray-500"] { color: #64748b; }
+.light [class*="text-gray-600"] { color: #94a3b8; }
+
+.light [class*="text-purple-3"] { color: #7e22ce; }
+.light [class*="text-fuchsia-3"] { color: #a21caf; }
+.light [class*="text-violet-3"] { color: #6d28d9; }
+.light [class*="text-indigo-3"] { color: #4338ca; }
+.light [class*="text-blue-3"] { color: #1d4ed8; }
+.light [class*="text-sky-3"] { color: #0369a1; }
+.light [class*="text-cyan-3"], .light [class*="text-cyan-4"] { color: #0e7490; }
+.light [class*="text-teal-3"] { color: #0f766e; }
+.light [class*="text-emerald-3"], .light [class*="text-emerald-4"] { color: #047857; }
+.light [class*="text-amber-3"], .light [class*="text-amber-4"] { color: #b45309; }
+.light [class*="text-orange-3"] { color: #c2410c; }
+.light [class*="text-yellow-3"] { color: #a16207; }
+.light [class*="text-red-3"], .light [class*="text-red-4"] { color: #b91c1c; }
+
+.light [class*="bg-purple-900"] { background-color: #f3e8ff; }
+.light [class*="bg-blue-900"] { background-color: #dbeafe; }
+.light [class*="bg-sky-900"] { background-color: #e0f2fe; }
+.light [class*="bg-indigo-900"] { background-color: #e0e7ff; }
+.light [class*="bg-amber-900"] { background-color: #fef3c7; }
+.light [class*="bg-orange-900"] { background-color: #ffedd5; }
+.light [class*="bg-cyan-900"] { background-color: #cffafe; }
+.light [class*="bg-teal-900"] { background-color: #ccfbf1; }
+.light [class*="bg-emerald-900"] { background-color: #d1fae5; }
+.light [class*="bg-yellow-900"] { background-color: #fef9c3; }
+.light [class*="bg-red-900"] { background-color: #fee2e2; }
+.light [class*="bg-gray-800"] { background-color: #e2e8f0; }
+.light [class*="bg-black"] { background-color: #f1f5f9; }
+
+.light [class*="to-fuchsia-950"] { --tw-gradient-to: #faf5ff var(--tw-gradient-to-position); }
+.light [class*="to-emerald-950"] { --tw-gradient-to: #ecfdf5 var(--tw-gradient-to-position); }
+
+.light [class*="bg-gray-700"] { background-color: #cbd5e1; }
+.light [class*="text-gray-700"] { color: #94a3b8; }
 
 .card {
   @apply rounded-xl border border-surface-border bg-surface-raised p-5;

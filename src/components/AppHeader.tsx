@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { signOut } from "@/auth";
+import ThemeToggle from "./ThemeToggle";
 
 export default function AppHeader({
   user,
@@ -15,6 +16,7 @@ export default function AppHeader({
         </span>
       </Link>
       <div className="flex items-center gap-3">
+        <ThemeToggle />
         {user.image && (
           // eslint-disable-next-line @next/next/no-img-element
           <img

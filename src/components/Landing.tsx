@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ThemeToggle from "./ThemeToggle";
 
 const AGENTS = [
   {
@@ -124,9 +125,12 @@ export default function Landing() {
         <span className="text-lg font-bold text-white">
           ⚡ Autonomous AI Workforce
         </span>
-        <Link href="/login" className="btn-secondary">
-          Sign in
-        </Link>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <Link href="/login" className="btn-secondary">
+            Sign in
+          </Link>
+        </div>
       </nav>
 
       {/* Hero — fills the first screen */}
