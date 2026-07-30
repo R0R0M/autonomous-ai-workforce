@@ -123,7 +123,7 @@ export default function Landing() {
       {/* Nav */}
       <nav className="relative flex items-center justify-between py-6">
         <span className="text-lg font-bold text-white">
-          ⚡ Autonomous AI Workforce
+          ⚡ Foundry
         </span>
         <div className="flex items-center gap-2">
           <ThemeToggle />
@@ -291,8 +291,7 @@ export default function Landing() {
       </div>
 
       <footer className="relative border-t border-surface-border py-8 text-center text-sm text-gray-500">
-        ⚡ Autonomous AI Workforce — an autonomous software company for your repositories.
-        Powered by Claude.
+        ⚡ Foundry — an autonomous software company for your repositories. Powered by Claude.
       </footer>
     </div>
   );

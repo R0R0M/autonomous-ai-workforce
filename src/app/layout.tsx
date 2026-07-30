@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Autonomous AI Workforce",
+  title: "Foundry — your autonomous software company",
   description:
-    "An autonomous software development company: Ideator, Coder, and Tester agents continuously improving your repositories.",
+    "Foundry is an autonomous software development company: Ideator, Coder, and Tester agents continuously improving your repositories.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

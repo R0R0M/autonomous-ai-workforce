@@ -30,7 +30,7 @@ export async function POST(req: Request) {
         price_data: {
           currency: "usd",
           product_data: {
-            name: "Autonomous AI Workforce credits",
+            name: "Foundry credits",
             description: "Prepaid usage credits — metered to the token, no markup.",
           },
           unit_amount: body.data.amountUsd * 100,

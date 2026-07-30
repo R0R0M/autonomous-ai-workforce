@@ -10,9 +10,9 @@ export default function AppHeader({
   return (
     <header className="mb-8 flex items-center justify-between border-b border-surface-border pb-5">
       <Link href="/" className="text-lg font-bold text-white transition-opacity hover:opacity-80">
-        ⚡ Autonomous AI{" "}
+        ⚡{" "}
         <span className="bg-gradient-to-r from-fuchsia-400 to-sky-400 bg-clip-text text-transparent">
-          Workforce
+          Foundry
         </span>
       </Link>
       <div className="flex items-center gap-3">

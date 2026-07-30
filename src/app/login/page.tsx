@@ -12,7 +12,7 @@ export default function LoginPage() {
 
       <div className="relative text-center">
         <p className="text-4xl">⚡</p>
-        <h1 className="mt-3 text-3xl font-bold text-white">Autonomous AI Workforce</h1>
+        <h1 className="mt-3 text-3xl font-bold text-white">Foundry</h1>
         <p className="mx-auto mt-3 max-w-md text-gray-400">
           Sign in and put a three-agent AI software company to work on your repositories —
           ideating, building, and shipping tested improvements around the clock.
