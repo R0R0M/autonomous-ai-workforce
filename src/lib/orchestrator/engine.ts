@@ -86,6 +86,9 @@ async function say(
 
 const execFileAsync = promisify(execFile);
 
+import { billingEnabled, chargeUsage } from "@/lib/billing";
+import { estimateCostUsd } from "@/lib/pricing";
+
 /**
  * Kill anything an agent left running in the workspace (dev servers, watchers).
  * Matches processes whose command line references the workspace directory.
@@ -95,14 +98,24 @@ async function killWorkspaceProcesses(repoId: string) {
   await execFileAsync("pkill", ["-f", dir]).catch(() => undefined); // no matches → non-zero exit, fine
 }
 
-async function addRunTokens(runId: string, usage: TokenUsage) {
+async function addRunTokens(run: RunWithRelations, usage: TokenUsage) {
   await db.cycleRun.update({
-    where: { id: runId },
+    where: { id: run.id },
     data: {
       inputTokens: { increment: usage.input },
       outputTokens: { increment: usage.output },
     },
   });
+  // Meter the usage against the owner's credit balance — at cost, no markup.
+  if (billingEnabled()) {
+    const costUsd = estimateCostUsd(config.anthropicModel, usage.input, usage.output);
+    await chargeUsage(
+      run.repository.userId,
+      costUsd,
+      `Agent usage — ${run.idea?.title ?? "repository analysis"} (${run.phase})`,
+      run.id,
+    ).catch((err) => console.error("Failed to meter usage:", err));
+  }
 }
 
 /**
@@ -133,7 +146,7 @@ async function recordChangeSummary(
       commitMessage: commit.message,
       ...summary,
     } as unknown as Record<string, unknown>);
-    await addRunTokens(run.id, usage);
+    await addRunTokens(run, usage);
   } catch (err) {
     await logActivity(run.repositoryId, "warn", "Change summary failed (non-fatal)", {
       runId: run.id,
@@ -274,7 +287,7 @@ async function phaseIdeating(run: RunWithRelations): Promise<AdvanceResult> {
     completedIdeas: done.map((i) => i.title),
     backlogTitles: backlog.map((i) => i.title),
   });
-  await addRunTokens(run.id, ideatorUsage);
+  await addRunTokens(run, ideatorUsage);
 
   await say(run, "IDEATOR", "SYSTEM", "ANALYSIS", { summary: batch.analysisSummary });
 
@@ -333,7 +346,7 @@ async function phaseCoding(run: RunWithRelations): Promise<AdvanceResult> {
     mode: "implement",
     onToolEvent: toolEventRecorder(run, "CODER"),
   });
-  await addRunTokens(run.id, usage);
+  await addRunTokens(run, usage);
 
   const sha = await commitAll(dir, `feat: ${idea.title}\n\nImplemented by the Coder agent.`);
   if (!sha) {
@@ -365,7 +378,7 @@ async function phaseTesting(run: RunWithRelations): Promise<AdvanceResult> {
     changedFiles: files,
     onToolEvent: toolEventRecorder(run, "TESTER"),
   });
-  await addRunTokens(run.id, usage);
+  await addRunTokens(run, usage);
 
   await say(run, "TESTER", "CODER", "VERDICT", verdict as unknown as Record<string, unknown>);
   await killWorkspaceProcesses(repo.id);
@@ -434,7 +447,7 @@ async function phaseFixing(run: RunWithRelations): Promise<AdvanceResult> {
     bugReports: formatBugsForCoder(openBugs),
     onToolEvent: toolEventRecorder(run, "CODER"),
   });
-  await addRunTokens(run.id, usage);
+  await addRunTokens(run, usage);
 
   const fixMessage = `fix: address tester feedback (iteration ${run.fixIteration})`;
   const fixSha = await commitAll(dir, fixMessage);

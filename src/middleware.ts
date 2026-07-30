@@ -3,7 +3,7 @@ import { authConfig } from "./auth.config";
 
 const { auth } = NextAuth(authConfig);
 
-const PUBLIC_PATHS = new Set(["/", "/login"]);
+const PUBLIC_PATHS = new Set(["/", "/login", "/api/billing/webhook"]);
 
 export default auth((req) => {
   if (!req.auth && !PUBLIC_PATHS.has(req.nextUrl.pathname)) {

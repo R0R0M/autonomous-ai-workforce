@@ -9,14 +9,22 @@ import type { TokenUsage } from "./client";
 import type { ToolEventSink } from "./tools";
 
 /**
- * Subprocess env: inherit everything EXCEPT the API key. If ANTHROPIC_API_KEY
- * leaks into the Claude Code subprocess it bills API credits, not the plan.
+ * Subprocess env: a minimal whitelist. Nothing else from our environment may
+ * leak into agent sessions — no ANTHROPIC_API_KEY (it would bill API credits
+ * instead of the plan), and no platform secrets (DATABASE_URL, AUTH_*,
+ * STRIPE_*, APP_ENCRYPTION_KEY, ...): an agent running a repo's tooling with
+ * our DATABASE_URL once executed that repo's migrations against OUR database.
  */
+const SDK_ENV_WHITELIST = ["PATH", "HOME", "SHELL", "LANG", "LC_ALL", "TMPDIR", "USER", "TERM"];
+
 function sdkEnv(): Record<string, string> {
   const env: Record<string, string> = {};
-  for (const [k, v] of Object.entries(process.env)) {
-    if (v !== undefined && k !== "ANTHROPIC_API_KEY") env[k] = v;
+  for (const key of SDK_ENV_WHITELIST) {
+    const value = process.env[key];
+    if (value !== undefined) env[key] = value;
   }
+  env.CI = "true";
+  env.NO_COLOR = "1";
   return env;
 }
 

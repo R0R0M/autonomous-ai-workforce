@@ -10,14 +10,16 @@ datasource db {
 // ---------- Auth.js ----------
 
 model User {
-  id            String       @id @default(cuid())
+  id            String              @id @default(cuid())
   name          String?
-  email         String?      @unique
+  email         String?             @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
   repositories  Repository[]
+  billing       BillingAccount?
+  transactions  CreditTransaction[]
 }
 
 model Account {
@@ -279,6 +281,37 @@ model ToolEvent {
 
   @@index([repositoryId, createdAt])
   @@index([runId, createdAt])
+}
+
+// ---------- Billing (Stripe prepaid credits, metered usage) ----------
+
+enum CreditTxnType {
+  TRIAL
+  PURCHASE
+  USAGE
+}
+
+model BillingAccount {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balanceMicros Int      @default(0) // micro-dollars: 1_000_000 = $1
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model CreditTransaction {
+  id              String        @id @default(cuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type            CreditTxnType
+  amountMicros    Int // positive = credit, negative = usage
+  description     String
+  stripeSessionId String?       @unique
+  runId           String?
+  createdAt       DateTime      @default(now())
+
+  @@index([userId, createdAt])
 }
 
 model ActivityLog {

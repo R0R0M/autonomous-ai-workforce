@@ -6,6 +6,8 @@ import PhaseBadge from "@/components/PhaseBadge";
 import AutoRefresh from "@/components/AutoRefresh";
 import AppHeader from "@/components/AppHeader";
 import Landing from "@/components/Landing";
+import BillingPanel from "@/components/BillingPanel";
+import { billingEnabled, getBalanceUsd, CREDIT_PACKS_USD } from "@/lib/billing";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +29,7 @@ export default async function HomePage() {
   if (!session?.user?.id) return <Landing />;
   const userId = session.user.id;
 
+  const balanceUsd = await getBalanceUsd(userId);
   const [repos, shippedCount, completedCycles, activeCycles] = await Promise.all([
     db.repository.findMany({
       where: { userId },
@@ -71,6 +74,14 @@ export default async function HomePage() {
           </div>
         ))}
       </section>
+
+      <div className="mb-8">
+        <BillingPanel
+          balanceUsd={balanceUsd}
+          enabled={billingEnabled()}
+          packs={[...CREDIT_PACKS_USD]}
+        />
+      </div>
 
       <div className="mb-8">
         <AddRepoForm />

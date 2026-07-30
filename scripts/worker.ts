@@ -10,6 +10,7 @@ import { db } from "../src/lib/db";
 import { advance } from "../src/lib/orchestrator/engine";
 import { logActivity } from "../src/lib/logger";
 import { config } from "../src/lib/config";
+import { billingEnabled, hasCredit } from "../src/lib/billing";
 import type { Repository } from "@prisma/client";
 
 const TICK_MS = 15_000;
@@ -63,6 +64,22 @@ async function driveRepository(repo: Repository): Promise<void> {
 
   if (!run) {
     if (!cycleIsDue(repo)) return;
+
+    // Billing gate: no credits, no new cycles (log at most once per 30 min).
+    if (billingEnabled() && !(await hasCredit(repo.userId))) {
+      const recent = await db.activityLog.findFirst({
+        where: {
+          repositoryId: repo.id,
+          message: { startsWith: "Out of credits" },
+          createdAt: { gte: new Date(Date.now() - 30 * 60 * 1000) },
+        },
+      });
+      if (!recent) {
+        await logActivity(repo.id, "warn", "Out of credits — cycles paused until you add more");
+      }
+      return;
+    }
+
     run = await db.cycleRun.create({ data: { repositoryId: repo.id, phase: "IDEATING" } });
     await logActivity(repo.id, "info", "Starting new improvement cycle", { runId: run.id });
   }
