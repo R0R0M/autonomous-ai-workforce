@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { auth, signOut } from "@/auth";
 import { db } from "@/lib/db";
 import AddRepoForm from "@/components/AddRepoForm";
 import PhaseBadge from "@/components/PhaseBadge";
 import AutoRefresh from "@/components/AutoRefresh";
+import Landing from "@/components/Landing";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +15,8 @@ const ACTIVE_PHASES = [
 
 export default async function HomePage() {
   const session = await auth();
-  if (!session?.user?.id) redirect("/login");
+  // Logged-out visitors get the marketing landing page.
+  if (!session?.user?.id) return <Landing />;
 
   const repos = await db.repository.findMany({
     where: { userId: session.user.id },
