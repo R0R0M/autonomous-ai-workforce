@@ -154,6 +154,9 @@ export default function Landing() {
             See how it works
           </a>
         </div>
+        <p className="mt-4 text-sm text-gray-400">
+          💳 Only get charged for what you use — metered to the token, nothing extra.
+        </p>
 
         {/* pipeline strip */}
         <div className="mx-auto mt-14 flex max-w-4xl flex-wrap items-center justify-center gap-x-2 gap-y-2 rounded-2xl border border-surface-border bg-surface-raised/70 px-6 py-4 text-sm font-medium backdrop-blur">
@@ -234,6 +237,29 @@ export default function Landing() {
               <p className="mt-2 text-sm leading-relaxed text-gray-300">{f.blurb}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Pricing promise */}
+      <section className="relative py-16">
+        <div className="card mx-auto max-w-3xl border-emerald-500/25 bg-gradient-to-br from-surface-raised to-emerald-950/30 py-10 text-center">
+          <p className="text-3xl">💳</p>
+          <h2 className="mt-3 text-3xl font-bold text-white">
+            Pay for the work.{" "}
+            <span className="bg-gradient-to-r from-emerald-300 to-teal-300 bg-clip-text text-transparent">
+              Nothing else.
+            </span>
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-gray-300">
+            You&apos;re charged exactly what your AI team uses — metered to the token, shown live
+            on your dashboard down to the cent. No subscriptions, no seat fees, no markup, no
+            surprises. If your agents don&apos;t work, you don&apos;t pay.
+          </p>
+          <div className="mx-auto mt-6 flex max-w-md flex-wrap justify-center gap-x-8 gap-y-2 text-sm text-emerald-300">
+            <span>✓ Usage-based, to the token</span>
+            <span>✓ Live cost tracking</span>
+            <span>✓ $0 extra fees</span>
+          </div>
         </div>
       </section>
 
