@@ -9,6 +9,8 @@ import AgentFeed from "@/components/AgentFeed";
 import BacklogTable from "@/components/BacklogTable";
 import LiveActivityFeed from "@/components/LiveActivityFeed";
 import ChangesShelf from "@/components/ChangesShelf";
+import AppHeader from "@/components/AppHeader";
+import PipelineStepper from "@/components/PipelineStepper";
 import { formatTokens } from "@/lib/pricing";
 
 export const dynamic = "force-dynamic";
@@ -113,14 +115,17 @@ export default async function RepoPage({ params }: { params: Promise<{ id: strin
     <main className="space-y-8">
       <AutoRefresh intervalMs={5000} />
 
-      <header className="space-y-4">
-        <Link href="/" className="text-sm text-gray-500 hover:text-gray-300">
+      <AppHeader user={session.user} />
+
+      <header className="space-y-3">
+        <Link href="/" className="text-sm text-gray-500 transition-colors hover:text-fuchsia-300">
           ← All repositories
         </Link>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold text-white">
-              {repo.owner}/{repo.name}
+              <span className="text-gray-500">{repo.owner}/</span>
+              {repo.name}
             </h1>
             <PhaseBadge phase={repo.status} />
           </div>
@@ -138,10 +143,16 @@ export default async function RepoPage({ params }: { params: Promise<{ id: strin
 
       {/* Current status */}
       <section className="card">
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-400">
+        <h2 className="section-heading">
+          <span className="section-dot bg-fuchsia-400" />
           Current cycle
         </h2>
         {activeRun ? (
+          <div className="space-y-4">
+            <PipelineStepper
+              phase={activeRun.phase}
+              requireApproval={repo.requireHumanApproval}
+            />
           <div className="flex flex-wrap items-center gap-x-8 gap-y-2 text-sm">
             <div className="flex items-center gap-2">
               <PhaseBadge phase={activeRun.phase} />
@@ -163,6 +174,7 @@ export default async function RepoPage({ params }: { params: Promise<{ id: strin
               </span>
             )}
           </div>
+          </div>
         ) : (
           <p className="text-sm text-gray-400">
             {repo.status === "RUNNING"
@@ -181,7 +193,8 @@ export default async function RepoPage({ params }: { params: Promise<{ id: strin
 
       {/* Live coding activity */}
       <section className="card">
-        <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-gray-400">
+        <h2 className="section-heading">
+          <span className="section-dot bg-sky-400" />
           Live coding activity
           {activeRun && ["CODING", "TESTING", "FIXING"].includes(activeRun.phase) && (
             <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
@@ -193,7 +206,8 @@ export default async function RepoPage({ params }: { params: Promise<{ id: strin
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Agent conversation */}
         <section className="card">
-          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-400">
+          <h2 className="section-heading">
+            <span className="section-dot bg-purple-400" />
             Agent conversation
           </h2>
           <AgentFeed messages={messages} />
@@ -202,7 +216,8 @@ export default async function RepoPage({ params }: { params: Promise<{ id: strin
         <div className="space-y-8">
           {/* Backlog */}
           <section className="card">
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-400">
+            <h2 className="section-heading">
+              <span className="section-dot bg-amber-400" />
               Idea backlog
             </h2>
             <BacklogTable ideas={ideas} />
@@ -210,7 +225,8 @@ export default async function RepoPage({ params }: { params: Promise<{ id: strin
 
           {/* Run history */}
           <section className="card">
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-400">
+            <h2 className="section-heading">
+              <span className="section-dot bg-indigo-400" />
               Cycle history
             </h2>
             {runs.length === 0 ? (
@@ -237,7 +253,8 @@ export default async function RepoPage({ params }: { params: Promise<{ id: strin
 
           {/* Deployments */}
           <section className="card">
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-gray-400">
+            <h2 className="section-heading">
+              <span className="section-dot bg-teal-400" />
               Deployments
             </h2>
             {deployments.length === 0 ? (

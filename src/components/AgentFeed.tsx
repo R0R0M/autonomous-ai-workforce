@@ -16,6 +16,13 @@ const AGENT_COLORS: Record<string, string> = {
   SYSTEM: "text-gray-400",
 };
 
+const AGENT_BORDERS: Record<string, string> = {
+  IDEATOR: "border-l-purple-500/70",
+  CODER: "border-l-sky-500/70",
+  TESTER: "border-l-amber-500/70",
+  SYSTEM: "border-l-gray-600",
+};
+
 function ContentView({ type, content }: { type: string; content: Record<string, unknown> }) {
   switch (type) {
     case "ANALYSIS":
@@ -94,7 +101,10 @@ export default function AgentFeed({ messages }: { messages: Message[] }) {
   return (
     <div className="space-y-4">
       {messages.map((m) => (
-        <div key={m.id} className="rounded-lg border border-surface-border bg-surface p-4">
+        <div
+          key={m.id}
+          className={`rounded-lg border border-surface-border border-l-2 bg-surface p-4 ${AGENT_BORDERS[m.fromAgent] ?? "border-l-gray-600"}`}
+        >
           <div className="mb-2 flex items-center gap-2 text-xs">
             <span className={`font-bold ${AGENT_COLORS[m.fromAgent] ?? ""}`}>{m.fromAgent}</span>
             <span className="text-gray-600">→</span>
