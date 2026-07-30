@@ -28,7 +28,7 @@ export default async function BillingSuccessPage({
   const balance = await getBalanceUsd(session.user.id);
 
   return (
-    <main className="flex min-h-[70vh] flex-col items-center justify-center gap-6 text-center">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
       {paid ? (
         <>
           <p className="text-5xl">🎉</p>

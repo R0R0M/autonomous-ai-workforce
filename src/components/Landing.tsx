@@ -111,14 +111,16 @@ const STEPS = [
 
 export default function Landing() {
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative min-h-screen w-full overflow-hidden">
       {/* ambient background glows */}
       <div className="pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[900px] -translate-x-1/2 rounded-full bg-fuchsia-600/20 blur-[140px]" />
       <div className="pointer-events-none absolute top-[38rem] -left-40 h-[400px] w-[500px] rounded-full bg-sky-600/15 blur-[120px]" />
       <div className="pointer-events-none absolute top-[70rem] -right-40 h-[400px] w-[500px] rounded-full bg-emerald-600/15 blur-[120px]" />
 
+      <div className="relative mx-auto max-w-6xl px-6">
+
       {/* Nav */}
-      <nav className="relative flex items-center justify-between py-2">
+      <nav className="relative flex items-center justify-between py-6">
         <span className="text-lg font-bold text-white">
           ⚡ Autonomous AI Workforce
         </span>
@@ -127,8 +129,8 @@ export default function Landing() {
         </Link>
       </nav>
 
-      {/* Hero */}
-      <section className="relative pt-20 pb-16 text-center">
+      {/* Hero — fills the first screen */}
+      <section className="relative flex min-h-[calc(100vh-6rem)] flex-col items-center justify-center pb-10 text-center">
         <p className="mx-auto mb-6 w-fit rounded-full border border-fuchsia-500/40 bg-fuchsia-500/10 px-4 py-1 text-sm text-fuchsia-300">
           Your codebase, improving itself — right now
         </p>
@@ -281,6 +283,8 @@ export default function Landing() {
           </Link>
         </div>
       </section>
+
+      </div>
 
       <footer className="relative border-t border-surface-border py-8 text-center text-sm text-gray-500">
         ⚡ Autonomous AI Workforce — an autonomous software company for your repositories.

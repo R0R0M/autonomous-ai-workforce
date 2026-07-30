@@ -3,7 +3,7 @@ import { signIn } from "@/auth";
 
 export default function LoginPage() {
   return (
-    <main className="relative flex min-h-[80vh] flex-col items-center justify-center gap-8 overflow-hidden">
+    <main className="relative flex min-h-screen flex-col items-center justify-center gap-8 overflow-hidden px-6">
       <div className="pointer-events-none absolute top-0 left-1/2 h-[400px] w-[700px] -translate-x-1/2 rounded-full bg-fuchsia-600/20 blur-[130px]" />
 
       <Link href="/" className="relative text-sm text-gray-500 hover:text-gray-300">

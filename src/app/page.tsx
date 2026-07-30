@@ -59,7 +59,7 @@ export default async function HomePage() {
   ];
 
   return (
-    <main>
+    <main className="mx-auto max-w-7xl px-6 py-8">
       <AutoRefresh intervalMs={8000} />
       <AppHeader user={session.user} />
 

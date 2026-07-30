@@ -112,7 +112,7 @@ export default async function RepoPage({ params }: { params: Promise<{ id: strin
   const modelName = process.env.ANTHROPIC_MODEL ?? "claude-opus-4-8";
 
   return (
-    <main className="space-y-8">
+    <main className="mx-auto max-w-7xl space-y-8 px-6 py-8">
       <AutoRefresh intervalMs={5000} />
 
       <AppHeader user={session.user} />
