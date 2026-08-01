@@ -32,11 +32,11 @@ export default function ControlButtons({
     <div className="flex flex-wrap gap-2">
       {status !== "RUNNING" ? (
         <button className="btn-primary" disabled={!!pending} onClick={() => act("start")}>
-          {pending === "start" ? "Starting..." : "▶ Start autonomous mode"}
+          {pending === "start" ? "Starting..." : "Start autonomous mode"}
         </button>
       ) : (
         <button className="btn-secondary" disabled={!!pending} onClick={() => act("pause")}>
-          {pending === "pause" ? "Pausing..." : "⏸ Pause"}
+          {pending === "pause" ? "Pausing..." : "Pause"}
         </button>
       )}
       {!hasActiveRun && (
@@ -47,10 +47,10 @@ export default function ControlButtons({
       {awaitingApproval && (
         <>
           <button className="btn-primary" disabled={!!pending} onClick={() => act("approve")}>
-            {pending === "approve" ? "Approving..." : "✓ Approve & merge"}
+            {pending === "approve" ? "Approving..." : "Approve & merge"}
           </button>
           <button className="btn-danger" disabled={!!pending} onClick={() => act("reject")}>
-            {pending === "reject" ? "Rejecting..." : "✕ Reject"}
+            {pending === "reject" ? "Rejecting..." : "Reject"}
           </button>
         </>
       )}

@@ -7,12 +7,14 @@
   --surface: 11 15 23;
   --surface-raised: 17 24 39;
   --surface-border: 31 41 55;
+  color-scheme: dark;
 }
 
 :root.light {
-  --surface: 245 247 250;
+  --surface: 248 250 252;
   --surface-raised: 255 255 255;
-  --surface-border: 224 230 240;
+  --surface-border: 222 228 237;
+  color-scheme: light;
 }
 
 body {
@@ -23,13 +25,13 @@ body {
  * Light-mode remaps. The app is authored dark-first with Tailwind utilities;
  * these attribute-based overrides re-map the palette when .light is active.
  * ------------------------------------------------------------------------- */
-.light body { color: #1e293b; }
+.light body { color: #0f172a; }
 
 .light .text-white,
 .light [class*="text-white"] { color: #0f172a; }
 .light [class*="text-gray-200"] { color: #1e293b; }
-.light [class*="text-gray-300"] { color: #475569; }
-.light [class*="text-gray-400"] { color: #64748b; }
+.light [class*="text-gray-300"] { color: #334155; }
+.light [class*="text-gray-400"] { color: #475569; }
 .light [class*="text-gray-500"] { color: #64748b; }
 .light [class*="text-gray-600"] { color: #94a3b8; }
 

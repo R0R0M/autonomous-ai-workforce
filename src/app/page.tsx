@@ -89,8 +89,7 @@ export default async function HomePage() {
 
       {repos.length === 0 ? (
         <div className="card border-fuchsia-500/20 bg-gradient-to-br from-surface-raised to-fuchsia-950/30 py-14 text-center">
-          <p className="text-4xl">🚀</p>
-          <p className="mt-3 text-xl font-semibold text-white">Your AI team is ready to work.</p>
+          <p className="text-xl font-semibold text-white">Your AI team is ready to work.</p>
           <p className="mx-auto mt-2 max-w-md text-sm text-gray-400">
             Connect a GitHub repository above and the Ideator, Coder, and Tester start improving
             it within minutes — tested pull requests, delivered around the clock.

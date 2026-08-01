@@ -67,7 +67,7 @@ export default function BillingPanel({
       )}
       {low && (
         <p className="w-full text-xs text-amber-300">
-          ⚠ Your balance is empty — agents pause until you add credits.
+          Your balance is empty — agents pause until you add credits.
         </p>
       )}
       {error && <p className="w-full text-xs text-red-400">{error}</p>}

@@ -3,7 +3,7 @@ import ThemeToggle from "./ThemeToggle";
 
 const AGENTS = [
   {
-    emoji: "💡",
+    mark: "PM",
     name: "The Ideator",
     role: "Product Manager · Architect",
     gradient: "from-purple-500 to-fuchsia-500",
@@ -13,7 +13,7 @@ const AGENTS = [
       "Studies your entire codebase like a founder obsessed with the product — UX, performance, security, accessibility, SEO — then proposes improvements scored across 11 dimensions and ranked by impact.",
   },
   {
-    emoji: "⌨️",
+    mark: "SWE",
     name: "The Coder",
     role: "Senior Full-Stack Engineer",
     gradient: "from-sky-500 to-blue-600",
@@ -23,7 +23,7 @@ const AGENTS = [
       "Takes the top-ranked task and builds it on an isolated branch — following your architecture, your conventions, your style. Runs your linter, your types, your tests before calling anything done.",
   },
   {
-    emoji: "🔬",
+    mark: "QA",
     name: "The Tester",
     role: "QA · Security · Performance",
     gradient: "from-amber-400 to-orange-500",
@@ -53,37 +53,31 @@ const STATS = [
 
 const FEATURES = [
   {
-    emoji: "📺",
     title: "Watch it work, live",
     blurb:
       "A real-time feed of every command your agents run and every file they touch — with colored diffs, as it happens.",
   },
   {
-    emoji: "🧾",
     title: "Every commit, explained",
     blurb:
       "Plain-English explanations of what each commit changed and why — no jargon, no digging through diffs.",
   },
   {
-    emoji: "🛡️",
     title: "Safety that's code, not vibes",
     blurb:
       "Sandboxed agents, secret scanning on every diff, encrypted tokens, and automatic git-revert rollback when a deploy fails its health check.",
   },
   {
-    emoji: "✅",
     title: "You stay in control",
     blurb:
       "Pull requests by default, an optional human-approval gate before anything merges, and pause/resume any time.",
   },
   {
-    emoji: "💸",
     title: "Know what every cycle costs",
     blurb:
       "Live token metering with per-cycle and all-time cost estimates. Runs on your Anthropic API key or your Claude plan.",
   },
   {
-    emoji: "🧠",
     title: "A team that remembers",
     blurb:
       "Persistent memory of past bugs, failed experiments, and wins — your agents never repeat a mistake or re-pitch a shipped idea.",
@@ -122,8 +116,9 @@ export default function Landing() {
 
       {/* Nav */}
       <nav className="relative flex items-center justify-between py-6">
-        <span className="text-lg font-bold text-white">
-          ⚡ Foundry
+        <span className="flex items-center gap-2 text-lg font-bold tracking-tight text-white">
+          <span className="h-3 w-3 rounded-sm bg-gradient-to-br from-fuchsia-500 to-sky-500" />
+          Foundry
         </span>
         <div className="flex items-center gap-2">
           <ThemeToggle />
@@ -161,7 +156,7 @@ export default function Landing() {
           </a>
         </div>
         <p className="mt-4 text-sm text-gray-400">
-          💳 Only get charged for what you use — metered to the token, nothing extra.
+          Only get charged for what you use — metered to the token, nothing extra.
         </p>
 
         {/* pipeline strip */}
@@ -202,9 +197,9 @@ export default function Landing() {
           {AGENTS.map((a) => (
             <div key={a.name} className={`card ring-1 ${a.ring} transition-transform hover:-translate-y-1`}>
               <div
-                className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${a.gradient} text-2xl`}
+                className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${a.gradient} text-xs font-bold tracking-wide text-white`}
               >
-                {a.emoji}
+                {a.mark}
               </div>
               <h3 className="text-lg font-bold text-white">{a.name}</h3>
               <p className={`text-xs font-semibold uppercase tracking-wide ${a.text}`}>{a.role}</p>
@@ -238,7 +233,7 @@ export default function Landing() {
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((f) => (
             <div key={f.title} className="card transition-colors hover:border-sky-700">
-              <p className="text-2xl">{f.emoji}</p>
+              <span className="block h-1 w-8 rounded-full bg-gradient-to-r from-fuchsia-500 to-sky-500" />
               <h3 className="mt-3 font-semibold text-white">{f.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-gray-300">{f.blurb}</p>
             </div>
@@ -249,7 +244,6 @@ export default function Landing() {
       {/* Pricing promise */}
       <section className="relative py-16">
         <div className="card mx-auto max-w-3xl border-emerald-500/25 bg-gradient-to-br from-surface-raised to-emerald-950/30 py-10 text-center">
-          <p className="text-3xl">💳</p>
           <h2 className="mt-3 text-3xl font-bold text-white">
             Pay for the work.{" "}
             <span className="bg-gradient-to-r from-emerald-300 to-teal-300 bg-clip-text text-transparent">
@@ -291,7 +285,7 @@ export default function Landing() {
       </div>
 
       <footer className="relative border-t border-surface-border py-8 text-center text-sm text-gray-500">
-        ⚡ Foundry — an autonomous software company for your repositories. Powered by Claude.
+        Foundry — an autonomous software company for your repositories. Powered by Claude.
       </footer>
     </div>
   );

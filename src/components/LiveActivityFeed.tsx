@@ -13,12 +13,12 @@ const AGENT_COLORS: Record<string, string> = {
   IDEATOR: "text-purple-300",
 };
 
-const TOOL_ICONS: Record<string, string> = {
-  bash: "❯",
-  write_file: "✎",
-  read_file: "📄",
-  list_files: "🗂",
-  usage: "🎟",
+const TOOL_LABELS: Record<string, string> = {
+  bash: "run",
+  write_file: "edit",
+  read_file: "read",
+  list_files: "list",
+  usage: "tokens",
 };
 
 function DiffView({ text }: { text: string }) {
@@ -68,7 +68,9 @@ export default function LiveActivityFeed({ events }: { events: ToolEventRow[] })
               <span className={`font-bold ${AGENT_COLORS[e.agent] ?? "text-gray-400"}`}>
                 {e.agent}
               </span>
-              <span className="text-gray-500">{TOOL_ICONS[e.tool] ?? "•"}</span>
+              <span className="rounded bg-surface-border/60 px-1.5 py-px text-[10px] uppercase tracking-wide text-gray-500">
+                {TOOL_LABELS[e.tool] ?? e.tool}
+              </span>
               <span
                 className={`break-all ${
                   isDiff ? "text-white" : isUsage ? "text-violet-300" : "text-gray-300"

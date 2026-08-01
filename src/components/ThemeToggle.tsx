@@ -25,11 +25,11 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggle}
-      className="btn-secondary px-2.5"
+      className="btn-secondary"
       title={light ? "Switch to dark mode" : "Switch to light mode"}
       aria-label="Toggle color theme"
     >
-      {mounted ? (light ? "🌙" : "☀️") : "◐"}
+      {mounted ? (light ? "Dark mode" : "Light mode") : "Theme"}
     </button>
   );
 }

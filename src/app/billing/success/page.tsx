@@ -31,7 +31,6 @@ export default async function BillingSuccessPage({
     <main className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
       {paid ? (
         <>
-          <p className="text-5xl">🎉</p>
           <h1 className="text-3xl font-bold text-white">
             ${amountUsd.toFixed(2)} in credits added
           </h1>
@@ -43,7 +42,6 @@ export default async function BillingSuccessPage({
         </>
       ) : (
         <>
-          <p className="text-5xl">🤔</p>
           <h1 className="text-2xl font-bold text-white">Payment not confirmed</h1>
           <p className="text-gray-400">
             We couldn&apos;t verify this checkout session. If you were charged, the credit will

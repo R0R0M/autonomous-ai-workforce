@@ -9,11 +9,12 @@ export default function AppHeader({
 }) {
   return (
     <header className="mb-8 flex items-center justify-between border-b border-surface-border pb-5">
-      <Link href="/" className="text-lg font-bold text-white transition-opacity hover:opacity-80">
-        ⚡{" "}
-        <span className="bg-gradient-to-r from-fuchsia-400 to-sky-400 bg-clip-text text-transparent">
-          Foundry
-        </span>
+      <Link
+        href="/"
+        className="flex items-center gap-2 text-lg font-bold tracking-tight text-white transition-opacity hover:opacity-80"
+      >
+        <span className="h-3 w-3 rounded-sm bg-gradient-to-br from-fuchsia-500 to-sky-500" />
+        Foundry
       </Link>
       <div className="flex items-center gap-3">
         <ThemeToggle />

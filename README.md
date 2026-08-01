@@ -1,4 +1,4 @@
-# ⚡ Foundry
+# Foundry
 
 Foundry is a web platform that works like an autonomous software development company. Connect a GitHub repository and three specialized Claude-powered agents continuously improve it, 24/7:
 

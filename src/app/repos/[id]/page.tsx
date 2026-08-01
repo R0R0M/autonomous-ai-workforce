@@ -170,7 +170,7 @@ export default async function RepoPage({ params }: { params: Promise<{ id: strin
             </span>
             {activeRun.inputTokens + activeRun.outputTokens > 0 && (
               <span className="text-violet-300">
-                🎟 {formatTokens(activeRun.inputTokens)} in / {formatTokens(activeRun.outputTokens)} out
+                tokens: {formatTokens(activeRun.inputTokens)} in / {formatTokens(activeRun.outputTokens)} out
               </span>
             )}
           </div>
