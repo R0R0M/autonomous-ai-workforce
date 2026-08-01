@@ -6,7 +6,7 @@ import { logActivity } from "@/lib/logger";
 import { billingEnabled, stripe, creditPurchase, getBalanceUsd } from "@/lib/billing";
 
 const ACTIVE_PHASES = [
-  "IDEATING", "CODING", "TESTING", "FIXING", "SAFETY_CHECK",
+  "IDEATING", "AWAITING_IDEA_APPROVAL", "CODING", "TESTING", "FIXING", "SAFETY_CHECK",
   "PUSHING", "AWAITING_APPROVAL", "MERGING", "DEPLOYING", "VERIFYING",
 ] as const;
 

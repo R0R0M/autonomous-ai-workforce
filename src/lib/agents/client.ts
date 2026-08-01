@@ -19,8 +19,8 @@ export function model(): string {
  */
 const MODERN_MODEL = /(fable-5|mythos-5|opus-4-[678]|sonnet-5|sonnet-4-6)/;
 
-export function supportsAdaptiveThinking(): boolean {
-  return MODERN_MODEL.test(model());
+export function supportsAdaptiveThinking(modelName?: string): boolean {
+  return MODERN_MODEL.test(modelName ?? model());
 }
 
 export type Effort = "low" | "medium" | "high" | "xhigh" | "max";
@@ -50,13 +50,17 @@ export function usageOf(message: {
 }
 
 /**
- * Thinking/effort request params appropriate for the configured model.
+ * Thinking/effort request params appropriate for the given model
+ * (falls back to the globally configured one).
  * Spread into messages.create / parse / toolRunner calls.
  */
-export function reasoningParams(effort: Effort): {
+export function reasoningParams(
+  effort: Effort,
+  modelName?: string,
+): {
   thinking?: { type: "adaptive" };
   output_config?: { effort: Effort };
 } {
-  if (!supportsAdaptiveThinking()) return {};
+  if (!supportsAdaptiveThinking(modelName)) return {};
   return { thinking: { type: "adaptive" }, output_config: { effort } };
 }

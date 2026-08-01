@@ -17,7 +17,7 @@ import { billingEnabled, hasCredit, CREDIT_PACKS_USD } from "@/lib/billing";
 export const dynamic = "force-dynamic";
 
 const ACTIVE_PHASES = [
-  "IDEATING", "CODING", "TESTING", "FIXING", "SAFETY_CHECK",
+  "IDEATING", "AWAITING_IDEA_APPROVAL", "CODING", "TESTING", "FIXING", "SAFETY_CHECK",
   "PUSHING", "AWAITING_APPROVAL", "MERGING", "DEPLOYING", "VERIFYING",
 ] as const;
 
@@ -113,7 +113,7 @@ export default async function RepoPage({ params }: { params: Promise<{ id: strin
   const coderBusy = activeRun ? ["CODING", "FIXING"].includes(activeRun.phase) : false;
   const displayIdeaTitle =
     displayRun && "idea" in displayRun ? (displayRun.idea?.title ?? null) : null;
-  const modelName = process.env.ANTHROPIC_MODEL ?? "claude-opus-4-8";
+  const modelName = repo.model;
 
   return (
     <main className="mx-auto max-w-7xl space-y-8 px-6 py-8">
@@ -133,15 +133,21 @@ export default async function RepoPage({ params }: { params: Promise<{ id: strin
             </h1>
             <PhaseBadge phase={repo.status} />
           </div>
-          <ControlButtons
-            repoId={repo.id}
-            status={repo.status}
-            hasActiveRun={!!activeRun}
-            awaitingApproval={activeRun?.phase === "AWAITING_APPROVAL"}
-            billingActive={billingActive}
-            hasCredit={userHasCredit}
-            packs={[...CREDIT_PACKS_USD]}
-          />
+          <div className="flex flex-wrap items-center gap-2">
+            <ControlButtons
+              repoId={repo.id}
+              status={repo.status}
+              hasActiveRun={!!activeRun}
+              awaitingApproval={activeRun?.phase === "AWAITING_APPROVAL"}
+              awaitingIdeaApproval={activeRun?.phase === "AWAITING_IDEA_APPROVAL"}
+              billingActive={billingActive}
+              hasCredit={userHasCredit}
+              packs={[...CREDIT_PACKS_USD]}
+            />
+            <Link href={`/repos/${repo.id}/settings`} className="btn-secondary">
+              Settings
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -159,6 +165,7 @@ export default async function RepoPage({ params }: { params: Promise<{ id: strin
             <PipelineStepper
               phase={activeRun.phase}
               requireApproval={repo.requireHumanApproval}
+              requireIdeaApproval={repo.requireIdeaApproval}
             />
           <div className="flex flex-wrap items-center gap-x-8 gap-y-2 text-sm">
             <div className="flex items-center gap-2">

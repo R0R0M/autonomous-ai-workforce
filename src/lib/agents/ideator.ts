@@ -48,6 +48,7 @@ export async function buildRepoSnapshot(workspaceDir: string): Promise<string> {
 }
 
 export interface IdeatorContext {
+  model?: string;
   snapshot: string;
   memory: string;
   failedIdeas: string[];
@@ -88,14 +89,15 @@ export async function runIdeator(
       systemPrompt: IDEATOR_SYSTEM,
       mode: "none",
       maxTurns: 4,
+      model: ctx.model,
     });
     const batch = IdeaBatchSchema.parse(extractJson(text));
     return { batch, usage };
   }
 
-  const reasoning = reasoningParams("high");
+  const reasoning = reasoningParams("high", ctx.model);
   const response = await client.messages.parse({
-    model: model(),
+    model: ctx.model ?? model(),
     max_tokens: 16000,
     ...(reasoning.thinking ? { thinking: reasoning.thinking } : {}),
     output_config: {

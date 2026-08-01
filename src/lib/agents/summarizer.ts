@@ -24,6 +24,7 @@ export type ChangeSummary = z.infer<typeof ChangeSummarySchema>;
  * powers the "Changes" shelf in the dashboard.
  */
 export async function summarizeChanges(input: {
+  model?: string;
   taskTitle: string;
   taskDescription: string;
   coderReport: string;
@@ -53,15 +54,16 @@ export async function summarizeChanges(input: {
         "You summarize code changes for a non-technical dashboard. Explain plainly what changed in each file and why it matters. Cover every file in the diffstat. No jargon, no code in your output.",
       mode: "none",
       maxTurns: 2,
+      model: input.model,
     });
     return { summary: ChangeSummarySchema.parse(extractJson(text)), usage };
   }
 
   const client = anthropic();
-  const reasoning = reasoningParams("low");
+  const reasoning = reasoningParams("low", input.model);
 
   const response = await client.messages.parse({
-    model: model(),
+    model: input.model ?? model(),
     max_tokens: 4000,
     ...(reasoning.thinking ? { thinking: reasoning.thinking } : {}),
     output_config: {

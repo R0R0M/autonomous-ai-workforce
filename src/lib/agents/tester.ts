@@ -8,6 +8,7 @@ import { makeWorkspaceTools, type ToolEventSink } from "./tools";
 import { VerdictSchema, type Verdict } from "./schemas";
 
 export interface TesterInput {
+  model?: string;
   workspaceDir: string;
   taskBrief: string;
   implementationReport: string;
@@ -63,9 +64,9 @@ export async function runTester(input: TesterInput): Promise<TesterResult> {
   ];
 
   const runner = client.beta.messages.toolRunner({
-    model: model(),
+    model: input.model ?? model(),
     max_tokens: 16000,
-    ...reasoningParams("high"),
+    ...reasoningParams("high", input.model),
     system: TESTER_SYSTEM,
     tools,
     messages: [{ role: "user", content: `${kickoff}\n\nFinish by calling submit_verdict.` }],
@@ -155,6 +156,7 @@ async function runTesterViaSdk(input: TesterInput, kickoff: string): Promise<Tes
     cwd: input.workspaceDir,
     mode: "readonly",
     maxTurns: 60,
+    model: input.model,
     onToolEvent: input.onToolEvent,
   });
 

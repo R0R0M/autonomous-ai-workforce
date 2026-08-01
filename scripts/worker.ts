@@ -16,6 +16,7 @@ import type { Repository } from "@prisma/client";
 const TICK_MS = 15_000;
 const ACTIVE_PHASES = [
   "IDEATING",
+  "AWAITING_IDEA_APPROVAL",
   "CODING",
   "TESTING",
   "FIXING",

@@ -108,7 +108,7 @@ async function addRunTokens(run: RunWithRelations, usage: TokenUsage) {
   });
   // Meter the usage against the owner's credit balance — at cost, no markup.
   if (billingEnabled()) {
-    const costUsd = estimateCostUsd(config.anthropicModel, usage.input, usage.output);
+    const costUsd = estimateCostUsd(run.repository.model, usage.input, usage.output);
     await chargeUsage(
       run.repository.userId,
       costUsd,
@@ -135,6 +135,7 @@ async function recordChangeSummary(
       diffStatOfCommit(dir, commit.sha),
     ]);
     const { summary, usage } = await summarizeChanges({
+      model: run.repository.model,
       taskTitle: idea.title,
       taskDescription: idea.description,
       coderReport,
@@ -281,6 +282,7 @@ async function phaseIdeating(run: RunWithRelations): Promise<AdvanceResult> {
   ]);
 
   const { batch, usage: ideatorUsage } = await runIdeator({
+    model: repo.model,
     snapshot,
     memory: formatMemories(memories),
     failedIdeas: failed.map((i) => i.title),
@@ -330,6 +332,13 @@ async function phaseIdeating(run: RunWithRelations): Promise<AdvanceResult> {
     runId: run.id,
   });
 
+  if (repo.requireIdeaApproval) {
+    await setPhase(run.id, "AWAITING_IDEA_APPROVAL", { ideaId: top.id, branchName });
+    await logActivity(repo.id, "info", "Awaiting your approval of the selected idea", {
+      runId: run.id,
+    });
+    return "blocked";
+  }
   await setPhase(run.id, "CODING", { ideaId: top.id, branchName });
   return "continue";
 }
@@ -341,6 +350,7 @@ async function phaseCoding(run: RunWithRelations): Promise<AdvanceResult> {
 
   const dir = await ensureOnBranch(run);
   const { report, usage } = await runCoder({
+    model: repo.model,
     workspaceDir: dir,
     taskBrief: formatTaskBrief(briefFromIdea(idea)),
     mode: "implement",
@@ -371,6 +381,7 @@ async function phaseTesting(run: RunWithRelations): Promise<AdvanceResult> {
   const files = await changedFiles(dir, repo.defaultBranch);
 
   const { verdict, usage } = await runTester({
+    model: repo.model,
     workspaceDir: dir,
     taskBrief: formatTaskBrief(briefFromIdea(idea)),
     implementationReport:
@@ -441,6 +452,7 @@ async function phaseFixing(run: RunWithRelations): Promise<AdvanceResult> {
   const openBugs = await db.bugReport.findMany({ where: { runId: run.id, status: "OPEN" } });
 
   const { report, usage } = await runCoder({
+    model: repo.model,
     workspaceDir: dir,
     taskBrief: formatTaskBrief(briefFromIdea(idea)),
     mode: "fix",
@@ -703,6 +715,7 @@ export async function advance(runId: string): Promise<AdvanceResult> {
         return await phaseSafetyCheck(run);
       case "PUSHING":
         return await phasePushing(run);
+      case "AWAITING_IDEA_APPROVAL":
       case "AWAITING_APPROVAL":
         return "blocked";
       case "MERGING":

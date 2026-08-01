@@ -12,7 +12,7 @@ import { billingEnabled, getBalanceUsd, CREDIT_PACKS_USD } from "@/lib/billing";
 export const dynamic = "force-dynamic";
 
 const ACTIVE_PHASES = [
-  "IDEATING", "CODING", "TESTING", "FIXING", "SAFETY_CHECK",
+  "IDEATING", "AWAITING_IDEA_APPROVAL", "CODING", "TESTING", "FIXING", "SAFETY_CHECK",
   "PUSHING", "AWAITING_APPROVAL", "MERGING", "DEPLOYING", "VERIFYING",
 ] as const;
 

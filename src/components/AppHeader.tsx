@@ -17,6 +17,9 @@ export default function AppHeader({
         Foundry
       </Link>
       <div className="flex items-center gap-3">
+        <Link href="/settings" className="btn-secondary">
+          Settings
+        </Link>
         <ThemeToggle />
         {user.image && (
           // eslint-disable-next-line @next/next/no-img-element

@@ -86,6 +86,7 @@ enum IdeaStatus {
 
 enum RunPhase {
   IDEATING
+  AWAITING_IDEA_APPROVAL
   CODING
   TESTING
   FIXING
@@ -140,6 +141,8 @@ model Repository {
   mergeMode            MergeMode    @default(PULL_REQUEST)
   autoMergePr          Boolean      @default(true)
   requireHumanApproval Boolean      @default(false)
+  requireIdeaApproval  Boolean      @default(false)
+  model                String       @default("claude-haiku-4-5")
   deployHookUrl        String?
   healthCheckUrl       String?
   status               RepoStatus   @default(IDLE)

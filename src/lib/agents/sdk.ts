@@ -36,6 +36,7 @@ export interface SdkAgentInput {
   cwd?: string;
   mode: SdkToolMode;
   maxTurns?: number;
+  model?: string;
   onToolEvent?: ToolEventSink;
 }
 
@@ -98,7 +99,7 @@ export async function runSdkAgent(input: SdkAgentInput): Promise<SdkAgentResult>
     prompt: input.prompt,
     options: {
       cwd: input.cwd,
-      model: config.anthropicModel,
+      model: input.model ?? config.anthropicModel,
       systemPrompt: input.systemPrompt,
       permissionMode: "bypassPermissions",
       allowDangerouslySkipPermissions: true,

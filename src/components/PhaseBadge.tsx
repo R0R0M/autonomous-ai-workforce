@@ -1,5 +1,6 @@
 const PHASE_STYLES: Record<string, string> = {
   IDEATING: "bg-purple-900/60 text-purple-300",
+  AWAITING_IDEA_APPROVAL: "bg-yellow-900/60 text-yellow-300",
   CODING: "bg-blue-900/60 text-blue-300",
   TESTING: "bg-amber-900/60 text-amber-300",
   FIXING: "bg-orange-900/60 text-orange-300",

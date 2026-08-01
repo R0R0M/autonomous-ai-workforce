@@ -9,6 +9,8 @@ const UpdateSchema = z.object({
   mergeMode: z.enum(["PULL_REQUEST", "DIRECT_MERGE"]).optional(),
   autoMergePr: z.boolean().optional(),
   requireHumanApproval: z.boolean().optional(),
+  requireIdeaApproval: z.boolean().optional(),
+  model: z.enum(["claude-haiku-4-5", "claude-sonnet-5", "claude-opus-4-8"]).optional(),
   deployHookUrl: z.string().url().nullable().or(z.literal("")).optional(),
   healthCheckUrl: z.string().url().nullable().or(z.literal("")).optional(),
   githubToken: z.string().min(10).optional(),

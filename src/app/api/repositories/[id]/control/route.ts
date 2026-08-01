@@ -6,11 +6,11 @@ import { logActivity } from "@/lib/logger";
 import { billingEnabled, hasCredit } from "@/lib/billing";
 
 const ControlSchema = z.object({
-  action: z.enum(["start", "pause", "run-once", "approve", "reject"]),
+  action: z.enum(["start", "pause", "run-once", "approve", "reject", "approve-idea", "reject-idea"]),
 });
 
 const ACTIVE_PHASES = [
-  "IDEATING", "CODING", "TESTING", "FIXING", "SAFETY_CHECK",
+  "IDEATING", "AWAITING_IDEA_APPROVAL", "CODING", "TESTING", "FIXING", "SAFETY_CHECK",
   "PUSHING", "AWAITING_APPROVAL", "MERGING", "DEPLOYING", "VERIFYING",
 ] as const;
 
@@ -71,6 +71,38 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       }
       await db.cycleRun.update({ where: { id: waiting.id }, data: { phase: "MERGING" } });
       await logActivity(id, "info", "Human approved — merging", { runId: waiting.id });
+      break;
+    }
+    case "approve-idea": {
+      const waiting = await db.cycleRun.findFirst({
+        where: { repositoryId: id, phase: "AWAITING_IDEA_APPROVAL" },
+        orderBy: { startedAt: "desc" },
+      });
+      if (!waiting) {
+        return NextResponse.json({ error: "No idea awaiting approval" }, { status: 409 });
+      }
+      await db.cycleRun.update({ where: { id: waiting.id }, data: { phase: "CODING" } });
+      await logActivity(id, "info", "Idea approved — Coder starting", { runId: waiting.id });
+      break;
+    }
+    case "reject-idea": {
+      const waiting = await db.cycleRun.findFirst({
+        where: { repositoryId: id, phase: "AWAITING_IDEA_APPROVAL" },
+        orderBy: { startedAt: "desc" },
+      });
+      if (!waiting) {
+        return NextResponse.json({ error: "No idea awaiting approval" }, { status: 409 });
+      }
+      await db.cycleRun.update({
+        where: { id: waiting.id },
+        data: { phase: "FAILED", error: "Idea rejected by user", finishedAt: new Date() },
+      });
+      if (waiting.ideaId) {
+        await db.idea.update({ where: { id: waiting.ideaId }, data: { status: "REJECTED" } });
+      }
+      await logActivity(id, "warn", "Idea rejected — a new cycle will propose different ideas", {
+        runId: waiting.id,
+      });
       break;
     }
     case "reject": {

@@ -8,6 +8,7 @@ export default function ControlButtons({
   status,
   hasActiveRun,
   awaitingApproval,
+  awaitingIdeaApproval,
   billingActive,
   hasCredit,
   packs,
@@ -16,6 +17,7 @@ export default function ControlButtons({
   status: string;
   hasActiveRun: boolean;
   awaitingApproval: boolean;
+  awaitingIdeaApproval: boolean;
   billingActive: boolean;
   hasCredit: boolean;
   packs: number[];
@@ -90,6 +92,16 @@ export default function ControlButtons({
           </button>
           <button className="btn-danger" disabled={!!pending} onClick={() => act("reject")}>
             {pending === "reject" ? "Rejecting..." : "Reject"}
+          </button>
+        </>
+      )}
+      {awaitingIdeaApproval && (
+        <>
+          <button className="btn-primary" disabled={!!pending} onClick={() => act("approve-idea")}>
+            {pending === "approve-idea" ? "Approving..." : "Approve idea"}
+          </button>
+          <button className="btn-danger" disabled={!!pending} onClick={() => act("reject-idea")}>
+            {pending === "reject-idea" ? "Rejecting..." : "Reject idea"}
           </button>
         </>
       )}

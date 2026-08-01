@@ -5,9 +5,12 @@ interface Step {
   text: string;
 }
 
-function buildSteps(requireApproval: boolean): Step[] {
+function buildSteps(requireApproval: boolean, requireIdeaApproval: boolean): Step[] {
   return [
     { keys: ["IDEATING"], label: "Ideate", dot: "bg-purple-400", text: "text-purple-300" },
+    ...(requireIdeaApproval
+      ? [{ keys: ["AWAITING_IDEA_APPROVAL"], label: "Idea review", dot: "bg-yellow-400", text: "text-yellow-300" }]
+      : []),
     { keys: ["CODING"], label: "Code", dot: "bg-sky-400", text: "text-sky-300" },
     { keys: ["TESTING", "FIXING"], label: "Test ⇄ Fix", dot: "bg-amber-400", text: "text-amber-300" },
     { keys: ["SAFETY_CHECK"], label: "Safety", dot: "bg-cyan-400", text: "text-cyan-300" },
@@ -25,12 +28,17 @@ function buildSteps(requireApproval: boolean): Step[] {
 export default function PipelineStepper({
   phase,
   requireApproval,
+  requireIdeaApproval = false,
 }: {
   phase: string;
   requireApproval: boolean;
+  requireIdeaApproval?: boolean;
 }) {
   const failed = phase === "FAILED" || phase === "ROLLED_BACK";
-  const steps = buildSteps(requireApproval || phase === "AWAITING_APPROVAL");
+  const steps = buildSteps(
+    requireApproval || phase === "AWAITING_APPROVAL",
+    requireIdeaApproval || phase === "AWAITING_IDEA_APPROVAL",
+  );
   const currentIdx = steps.findIndex((s) => s.keys.includes(phase));
 
   return (

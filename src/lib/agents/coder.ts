@@ -5,6 +5,7 @@ import { config } from "@/lib/config";
 import { runSdkAgent } from "./sdk";
 
 export interface CoderInput {
+  model?: string;
   workspaceDir: string;
   taskBrief: string;
   mode: "implement" | "fix";
@@ -46,6 +47,7 @@ export async function runCoder(input: CoderInput): Promise<CoderResult> {
       cwd: input.workspaceDir,
       mode: "readwrite",
       maxTurns: 100,
+      model: input.model,
       onToolEvent: input.onToolEvent,
     });
     return { report: text || "(the Coder produced no final report)", usage };
@@ -58,9 +60,9 @@ export async function runCoder(input: CoderInput): Promise<CoderResult> {
   });
 
   const runner = client.beta.messages.toolRunner({
-    model: model(),
+    model: input.model ?? model(),
     max_tokens: 16000,
-    ...reasoningParams("xhigh"),
+    ...reasoningParams("xhigh", input.model),
     system: CODER_SYSTEM,
     tools,
     messages: [{ role: "user", content: kickoff }],
