@@ -287,7 +287,7 @@ export default function Landing() {
       </div>
 
       <footer className="relative border-t border-surface-border py-8 text-center text-sm text-gray-500">
-        Foundry — an autonomous software company for your repositories. Powered by Claude.
+        Foundry — an autonomous software company for your repositories.
       </footer>
     </div>
   );
