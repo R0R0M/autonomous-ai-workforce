@@ -69,6 +69,13 @@ body {
 .light [class*="bg-gray-700"] { background-color: #cbd5e1; }
 .light [class*="text-gray-700"] { color: #94a3b8; }
 
+/* Component classes compose their colors via @apply, so the utility-based
+ * remaps above never match them — override them directly. */
+.light .btn-secondary { color: #1e293b; }
+.light .input { color: #0f172a; }
+.light .input::placeholder { color: #94a3b8; }
+.light .label { color: #475569; }
+
 .card {
   @apply rounded-xl border border-surface-border bg-surface-raised p-5;
 }
