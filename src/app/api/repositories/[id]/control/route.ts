@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireUserId } from "@/auth";
 import { db } from "@/lib/db";
 import { logActivity } from "@/lib/logger";
+import { billingEnabled, hasCredit } from "@/lib/billing";
 
 const ControlSchema = z.object({
   action: z.enum(["start", "pause", "run-once", "approve", "reject"]),
@@ -24,6 +25,15 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const body = ControlSchema.safeParse(await req.json());
   if (!body.success) {
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+  }
+
+  // Starting work requires credits — the client turns a 402 into a billing prompt.
+  if (
+    (body.data.action === "start" || body.data.action === "run-once") &&
+    billingEnabled() &&
+    !(await hasCredit(userId))
+  ) {
+    return NextResponse.json({ error: "insufficient_credits" }, { status: 402 });
   }
 
   switch (body.data.action) {

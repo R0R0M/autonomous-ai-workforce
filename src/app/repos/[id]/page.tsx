@@ -12,6 +12,7 @@ import ChangesShelf from "@/components/ChangesShelf";
 import AppHeader from "@/components/AppHeader";
 import PipelineStepper from "@/components/PipelineStepper";
 import { formatTokens } from "@/lib/pricing";
+import { billingEnabled, hasCredit, CREDIT_PACKS_USD } from "@/lib/billing";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,9 @@ export default async function RepoPage({ params }: { params: Promise<{ id: strin
 
   const repo = await db.repository.findUnique({ where: { id } });
   if (!repo || repo.userId !== session.user.id) notFound();
+
+  const billingActive = billingEnabled();
+  const userHasCredit = billingActive ? await hasCredit(session.user.id) : true;
 
   const [activeRun, ideas, messages, runs, deployments, logs, toolEvents] = await Promise.all([
     db.cycleRun.findFirst({
@@ -134,6 +138,9 @@ export default async function RepoPage({ params }: { params: Promise<{ id: strin
             status={repo.status}
             hasActiveRun={!!activeRun}
             awaitingApproval={activeRun?.phase === "AWAITING_APPROVAL"}
+            billingActive={billingActive}
+            hasCredit={userHasCredit}
+            packs={[...CREDIT_PACKS_USD]}
           />
         </div>
       </header>

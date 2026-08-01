@@ -1,7 +1,30 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import { db } from "@/lib/db";
+import { logActivity } from "@/lib/logger";
 import { billingEnabled, stripe, creditPurchase, getBalanceUsd } from "@/lib/billing";
+
+const ACTIVE_PHASES = [
+  "IDEATING", "CODING", "TESTING", "FIXING", "SAFETY_CHECK",
+  "PUSHING", "AWAITING_APPROVAL", "MERGING", "DEPLOYING", "VERIFYING",
+] as const;
+
+/** Perform the action the user was attempting when checkout interrupted them. */
+async function runPurchaseIntent(userId: string, repoId: string, action: string) {
+  const repo = await db.repository.findUnique({ where: { id: repoId } });
+  if (!repo || repo.userId !== userId) return false;
+
+  await db.repository.update({ where: { id: repoId }, data: { status: "RUNNING" } });
+  const active = await db.cycleRun.findFirst({
+    where: { repositoryId: repoId, phase: { in: [...ACTIVE_PHASES] } },
+  });
+  if (!active && (action === "run-once" || action === "start")) {
+    await db.cycleRun.create({ data: { repositoryId: repoId, phase: "IDEATING" } });
+  }
+  await logActivity(repoId, "info", "Credits added — starting cycle");
+  return true;
+}
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +46,15 @@ export default async function BillingSuccessPage({
 
   if (paid && amountUsd > 0) {
     await creditPurchase(session.user.id, amountUsd, checkout.id);
+
+    // If checkout was triggered by a "run cycle" click, run it now and land
+    // the user back on their repo to watch the agents work.
+    const repoId = checkout.metadata?.repoId;
+    const action = checkout.metadata?.action;
+    if (repoId && action) {
+      const ran = await runPurchaseIntent(session.user.id, repoId, action);
+      if (ran) redirect(`/repos/${repoId}`);
+    }
   }
 
   const balance = await getBalanceUsd(session.user.id);

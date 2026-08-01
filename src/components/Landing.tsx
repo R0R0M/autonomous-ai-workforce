@@ -156,7 +156,8 @@ export default function Landing() {
           </a>
         </div>
         <p className="mt-4 text-sm text-gray-400">
-          Only get charged for what you use — metered to the token, nothing extra.
+          <span className="font-semibold text-emerald-400">$1 of free credits</span> when you sign
+          up — no card required. Then only pay for what you use, metered to the token.
         </p>
 
         {/* pipeline strip */}
@@ -255,7 +256,8 @@ export default function Landing() {
             on your dashboard down to the cent. No subscriptions, no seat fees, no markup, no
             surprises. If your agents don&apos;t work, you don&apos;t pay.
           </p>
-          <div className="mx-auto mt-6 flex max-w-md flex-wrap justify-center gap-x-8 gap-y-2 text-sm text-emerald-300">
+          <div className="mx-auto mt-6 flex max-w-lg flex-wrap justify-center gap-x-8 gap-y-2 text-sm text-emerald-300">
+            <span>✓ $1 free starter credit</span>
             <span>✓ Usage-based, to the token</span>
             <span>✓ Live cost tracking</span>
             <span>✓ $0 extra fees</span>
