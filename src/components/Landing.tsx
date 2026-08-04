@@ -286,8 +286,17 @@ export default function Landing() {
 
       </div>
 
-      <footer className="relative border-t border-surface-border py-8 text-center text-sm text-gray-500">
-        Foundry — an autonomous software company for your repositories.
+      <footer className="relative space-y-2 border-t border-surface-border py-8 text-center text-sm text-gray-500">
+        <p>Foundry — an autonomous software company for your repositories.</p>
+        <p>
+          Questions?{" "}
+          <a
+            href="mailto:roninkmehta@gmail.com"
+            className="text-sky-400 transition-colors hover:text-sky-300"
+          >
+            Contact us at roninkmehta@gmail.com
+          </a>
+        </p>
       </footer>
     </div>
   );
